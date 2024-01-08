@@ -1,9 +1,8 @@
 import express from "express";
-
 import { configDotenv } from "dotenv";
 configDotenv();
 import errorController from "./controllers/errorController.js";
-
+import cookieParser from "cookie-parser";
 import { rootRoute, userRoute } from "./routes/routes.js";
 import db from "./utils/db.js";
 
@@ -13,6 +12,7 @@ const router = express.Router();
 db();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use("/api", router);
 
 router.use(rootRoute);

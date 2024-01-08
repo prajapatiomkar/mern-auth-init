@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema(
   {
@@ -42,6 +43,17 @@ userSchema.methods.matchPassword = async function (password, next) {
   }
 };
 
+userSchema.methods.generateJWT = async function (next) {
+  try {
+    const token = await jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+
+    return token;
+  } catch (error) {
+    next(error);
+  }
+};
 const userModel = mongoose.model("User", userSchema);
 
 export default userModel;

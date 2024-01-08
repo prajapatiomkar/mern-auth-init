@@ -24,20 +24,36 @@ const userLoginController = async (req, res, next) => {
       });
     }
 
-    const passwords = await user.matchPassword(password);
+    const passwords = await user.matchPassword(password, next);
 
     if (!passwords) {
       res.status(401).json({ message: "incorrect password" });
+    } else {
+      const token = await user.generateJWT(next);
+      res.cookie("jwt", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+      });
+      res.status(200).json({
+        _id: user._id,
+        email: user.email,
+        username: user.username,
+      });
     }
-
-    res.status(200).json({
-      _id: user._id,
-      email: user.email,
-      username: user.username,
-    });
   } catch (error) {
     next(error);
   }
 };
 
-export { userRegisterController, userLoginController };
+const userLogoutController = async (req, res, next) => {
+  try {
+    res.clearCookie("jwt");
+    res.status(200).json({ message: "user logout" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { userRegisterController, userLoginController, userLogoutController };
