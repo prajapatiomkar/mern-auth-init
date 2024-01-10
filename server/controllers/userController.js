@@ -55,5 +55,17 @@ const userLogoutController = async (req, res, next) => {
     next(error);
   }
 };
+const userProfileController = async (req, res, next) => {
+  try {
+    res.status(200).json({ message: "profile" });
+  } catch (error) {
+    next(error);
+  }
+};
 
-export { userRegisterController, userLoginController, userLogoutController };
+export {
+  userRegisterController,
+  userLoginController,
+  userLogoutController,
+  userProfileController,
+};
